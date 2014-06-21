@@ -1,0 +1,108 @@
+body {
+	background: black;
+	overflow: hidden;
+	margin: 0; padding: 0;
+}
+body > div {
+	width: 100%; height: 100%;
+	position: absolute;
+	margin: 0; padding: 0;
+	left: 0; top: 0;
+	font-family: Audiowide;
+}
+
+#ships > div {
+	width: 50px; height: 50px;
+	position: absolute;
+}
+#planets > div {
+	width: 150px; height: 150px;
+	position: absolute;
+}
+#projectiles > div {
+	width: 10px; height: 10px;
+	position: absolute;
+}
+#planets > div > div {
+	width: 50px; height: 50px;
+	position: absolute;
+	background-image: url('crater50.png');
+}
+
+.leftship {	
+	background-image: url('ship1.png');
+}
+.rightship {	
+	background-image: url('ship2.png');
+}
+.bomb {
+	background-image: url('missile.png');
+}
+.debris {
+	background-image: url('debris.png');
+}
+
+#turnindicator {
+	position: absolute;
+	left: -50px; top: -50px;
+	width: 50px; height: 55px;
+	border-bottom: solid 3px red;
+}
+
+#intro {
+	background: #000;
+	opacity: 0.8;
+	padding: 50px 0;
+}
+h1 {
+	color: #fff;
+	font-size: 48px;
+	text-align: center;
+	width: 100%
+	font-weight: normal;
+}
+#intro > p {
+	color: #fff;
+	width: 500px;
+	margin: 15px auto !important;
+}
+
+.infopanel {
+	padding: 25px; margin: 50px;
+	border: 1px solid #0f0;
+	background-image: url('panel.png');
+	background-position: 50% 0%;
+	/*cursor: hand;*/
+	color: #0f0;
+}
+.infopanel > div, .infopanel > a, .infopanel > div > a, td > a, td {
+	color: #0f0;
+}
+.infopanel > div {
+	margin-top: 15px;
+}
+td > a:hover {
+	color: #ff0 !important;
+}
+#shotinfo {
+	width: 150px;
+}
+#options {
+	width: 250px;
+}
+
+.score {
+	color: #fff; font-size: 72px;
+	position: absolute; bottom: 10px;
+}
+#score1 {
+	left: 10px;
+}
+#score2 {
+	right: 10px;
+}
+
+#optform > table {
+	width: 100%;
+	border: none;
+}
