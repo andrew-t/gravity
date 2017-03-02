@@ -6,12 +6,18 @@ class Universe {
 		this.players = [];
 		this.particles = new Set();
 
+		this.gameState = {
+			currentPlayer: 0,
+			state: Universe.TARGETTING
+		};
+
 		this.craterSize = 25;
 
 		this.timestream = new Timestream();
 		this.timestream.maxInterval = 100;
 		this.timestream.on('frame', interval => {
 			const ctx = this.canvas.getContext('2d');
+			let ongoingShot = false;
 			this.drawBackground(ctx);
 			this.particles.forEach(particle => {
 				if (interval == this.maxInterval &&
@@ -29,14 +35,22 @@ class Universe {
 					if (collision)
 						particle.impact(collision);
 				}
+				if (!particle.disposable)
+					ongoingShot = true;
 				particle.draw(ctx);
 			});
+			if (!ongoingShot)
+				this.gameState.state = Universe.TARGETTING;
 		});
 
 		this._clickListener = e => {
-			const mouse = Vector.canvasMouseVector(this.canvas, e),
-				player = this.players[0];
-			player.shoot(mouse.minus(player.location).times(1));
+			if (this.gameState.state != Universe.TARGETTING)
+				return;
+			const mouse = Vector.canvasMouseVector(this.canvas, e);
+			this.currentPlayer.shoot(
+				mouse.minus(this.currentPlayer.location)
+					.times(1));
+			this.endTurn();
 		};
 		canvas.addEventListener('click', this._clickListener);
 	}
@@ -66,8 +80,21 @@ class Universe {
 		return this.starSystem.gravityAt(location);
 	}
 
+	get currentPlayer() {
+		return this.players[this.gameState.currentPlayer];
+	}
+
+	endTurn() {
+		this.gameState.currentPlayer =
+			1 - this.gameState.currentPlayer;
+		this.gameState.state = Universe.ONGOING_SHOT;
+	}
+
 	destroy() {
 		this._cancelUpdates();
 		this.canvas.removeEventListener(this._clickListener);
 	}
 }
+
+Universe.TARGETTING = Symbol('Targetting');
+Universe.ONGOING_SHOT = Symbol('Ongoing Shot');
