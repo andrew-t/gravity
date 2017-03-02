@@ -1,0 +1,6 @@
+[submodule "xy"]
+	path = xy
+	url = https://github.com/andrew-t/xy.git
+[submodule "framerate"]
+	path = framerate
+	url = https://github.com/andrew-t/framerate.git
