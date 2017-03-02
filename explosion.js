@@ -2,11 +2,25 @@ const Explosions = {
 
 	full: function fullExplosion(
 				universe, location, velocity) {
+		// Smoke
+		Explosions.single(universe, location,
+			{
+				velocity: velocity.times(0.2),
+				violence: 400,
+				lifetime: 5000,
+				destroyOnImpact: false,
+				debrisRadius: 20,
+				debrisCount: 500,
+				maxOpacity: 0.25,
+				baseColour: '64, 64, 64',
+				globalCompositeOperation: 'source-over'
+			});
 		// Fireball
 		Explosions.single(universe, location,
 			{
 				velocity,
 				violence: 750,
+				lifetime: 1500,
 				destroyOnImpact: false
 			});
 		// Glowing embers
@@ -29,6 +43,7 @@ const Explosions = {
 		destroyOnImpact,
 		lifetime,
 		debrisCount,
+		maxOpacity,
 		globalCompositeOperation,
 		baseColour
 	}) {
@@ -41,7 +56,8 @@ const Explosions = {
 		if (!lifetime) lifetime = 1000;
 		if (!globalCompositeOperation)
 			globalCompositeOperation = 'screen';
-		if (!baseColour) baseColour = '64, 16, 0';
+		if (!baseColour) baseColour = '128, 16, 0';
+		if (!maxOpacity) maxOpacity = 1;
 
 		const startTime = universe.timestream.t;
 
@@ -64,7 +80,8 @@ const Explosions = {
 			Object.defineProperty(particle, 'colour', {
 				get: () => 'rgba(' +
 					baseColour + ', ' +
-					((lifetime + startTime - universe.timestream.t) / lifetime)
+					((lifetime + startTime - universe.timestream.t)
+						* maxOpacity / lifetime)
 					+ ')'
 			});
 

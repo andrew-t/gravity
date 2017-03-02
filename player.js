@@ -8,6 +8,7 @@ class Player {
 	shoot(initialVelocity) {
 		const missile = this.universe.addParticle(
 			this.location, initialVelocity, 5);
+		missile.isBullet = true;
 		missile.on('impact', collision => {
 			missile.destroy();
 			collision.obstacle.addCrater(

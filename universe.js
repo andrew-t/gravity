@@ -35,8 +35,13 @@ class Universe {
 					if (collision)
 						particle.impact(collision);
 				}
-				if (!particle.disposable)
+				if (particle.isBullet) {
 					ongoingShot = true;
+					// TODO:
+					// this.players.forEach(player =>
+					// if (motion.intersects(player.circle))
+					// player.explode();
+				}
 				particle.draw(ctx);
 			});
 			if (!ongoingShot)
