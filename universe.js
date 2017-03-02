@@ -34,17 +34,25 @@ class Universe {
 							motion, particle.radius);
 					if (collision)
 						particle.impact(collision);
-				}
-				if (particle.isBullet) {
-					ongoingShot = true;
-					// TODO:
-					// this.players.forEach(player =>
-					// if (motion.intersects(player.circle))
-					// player.explode();
+					if (particle.isBullet) {
+						ongoingShot = true;
+						if (particle.hasClearedShooter)
+							this.players.forEach(player => {
+								if (player.collision(motion, particle.radius)) {
+									player.explode();
+									particle.impact(collision);
+									this.gameState.state = Universe.GAME_OVER;
+								}
+							});
+						else if (particle.location.distanceTo(particle.owner.location) >
+								particle.radius + particle.owner.hitArea.radius)
+							particle.hasClearedShooter = true;
+					}
 				}
 				particle.draw(ctx);
 			});
-			if (!ongoingShot)
+			if (!ongoingShot &&
+				this.gameState.state == Universe.ONGOING_SHOT)
 				this.gameState.state = Universe.TARGETTING;
 		});
 
@@ -103,3 +111,4 @@ class Universe {
 
 Universe.TARGETTING = Symbol('Targetting');
 Universe.ONGOING_SHOT = Symbol('Ongoing Shot');
+Universe.GAME_OVER = Symbol('Game Over');

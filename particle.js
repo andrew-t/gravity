@@ -13,7 +13,7 @@ class Particle {
 		this.colour = def('colour', 'red');
 		this.globalCompositeOperation = def('globalCompositeOperation', null);
 		this.disposable = def('disposable', false);
-		
+
 		this.destroyed = false;
 
 		function def(name, defVal) {

@@ -1,7 +1,7 @@
 const Explosions = {
 
 	full: function fullExplosion(
-				universe, location, velocity) {
+				universe, location, velocity = Vector.zero) {
 		// Smoke
 		Explosions.single(universe, location,
 			{
@@ -10,7 +10,7 @@ const Explosions = {
 				lifetime: 5000,
 				destroyOnImpact: false,
 				debrisRadius: 20,
-				debrisCount: 500,
+				debrisCount: 300,
 				maxOpacity: 0.25,
 				baseColour: '64, 64, 64',
 				globalCompositeOperation: 'source-over'
@@ -21,6 +21,7 @@ const Explosions = {
 				velocity,
 				violence: 750,
 				lifetime: 1500,
+				debrisCount: 500,
 				destroyOnImpact: false
 			});
 		// Glowing embers
@@ -29,7 +30,7 @@ const Explosions = {
 				velocity,
 				violence: 750,
 				destroyOnImpact: false,
-				debrisCount: 100,
+				debrisCount: 50,
 				lifetime: 2000,
 				debrisRadius: 3,
 				baseColour: '255, 255, 255'
