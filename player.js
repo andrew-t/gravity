@@ -12,26 +12,8 @@ class Player {
 			missile.destroy();
 			collision.obstacle.addCrater(
 				collision.location, this.universe.craterSize);
-			// Fireball
-			explode(this.universe,
-				missile.location,
-				{
-					velocity: missile.velocity,
-					violence: 1000,
-					destroyOnImpact: false
-				});
-			// Glowing embers
-			explode(this.universe,
-				missile.location,
-				{
-					velocity: missile.velocity,
-					violence: 1000,
-					destroyOnImpact: false,
-					debrisCount: 100,
-					lifetime: 2000,
-					debrisRadius: 3,
-					baseColour: '255, 255, 255'
-				});
+			Explosions.full(this.universe,
+				missile.location, missile.velocity);
 		});
 	}
 
