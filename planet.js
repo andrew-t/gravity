@@ -4,16 +4,32 @@ class Planet {
 		this.radius = radius;
 		this.radiusSquared = radius * radius;
 		this.mass = mass;
-		this.colour = `hsl(${Math.random() * 360}, 75%, 65%)`;
+		this.hue = Math.random() * 360;
 		this.craters = [];
 	}
 
 	draw(ctx) {
+		ctx.globalCompositeOperation = 'source-over';
 		ctx.strokeStyle = 'transparent';
-		ctx.fillStyle = this.colour;
+		if (!this.gradient) {
+			this.gradient = ctx.createRadialGradient(
+				this.location.x - this.radius * 0.3, this.location.y - this.radius * 0.3, this.radius * 2,
+				this.location.x - this.radius * 0.3, this.location.y - this.radius * 0.3, 0);
+			this.gradient.addColorStop(0, `hsl(${this.hue}, 75%, 20%)`);
+			this.gradient.addColorStop(1, `hsl(${this.hue}, 75%, 75%)`);
+		}
+		ctx.fillStyle = this.gradient;
 		this.circle.draw(ctx);
+		ctx.globalCompositeOperation = 'destination-out';
 		ctx.fillStyle = 'black';
 		this.craters.forEach(crater => crater.draw(ctx));
+		ctx.globalCompositeOperation = 'source-over';
+	}
+
+	drawBack(ctx) {
+		ctx.strokeStyle = 'transparent';
+		ctx.fillStyle = `hsl(${this.hue}, 75%, 25%)`;
+		this.circle.draw(ctx);
 	}
 
 	addCrater(location, radius) {

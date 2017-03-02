@@ -1,7 +1,6 @@
 class Universe {
 	constructor(canvas) {
 		this.canvas = canvas;
-		this.starfield = new Starfield(canvas);
 		this.starSystem = new StarSystem(canvas);
 		this.players = [];
 		this.particles = new Set();
@@ -90,7 +89,7 @@ class Universe {
 	}
 
 	drawBackground(ctx) {
-		this.starfield.draw(ctx);
+		ctx.clearRect(-10, -10, this.canvas.width + 20, this.canvas.height + 20);
 		this.starSystem.draw(ctx);
 		this.players.forEach(player => player.draw(ctx));
 	}

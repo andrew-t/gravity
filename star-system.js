@@ -53,6 +53,9 @@ class StarSystem {
 	draw(ctx) {
 		this.planets.forEach(planet => planet.draw(ctx));
 	}
+	drawBacks(ctx) {
+		this.planets.forEach(planet => planet.drawBack(ctx));
+	}
 
 	collision(lineSegment, radius) {
 		let collision = null;

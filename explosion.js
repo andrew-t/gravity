@@ -6,7 +6,7 @@ const Explosions = {
 		Explosions.single(universe, location,
 			{
 				velocity: velocity.times(0.2),
-				violence: 400,
+				violence: 200,
 				lifetime: 5000,
 				destroyOnImpact: false,
 				debrisRadius: 50,
@@ -19,7 +19,7 @@ const Explosions = {
 		Explosions.single(universe, location,
 			{
 				velocity,
-				violence: 750,
+				violence: 450,
 				lifetime: 1500,
 				debrisCount: 100,
 				debrisRadius: 30,
@@ -29,7 +29,7 @@ const Explosions = {
 		Explosions.single(universe, location,
 			{
 				velocity,
-				violence: 750,
+				violence: 350,
 				destroyOnImpact: false,
 				debrisCount: 50,
 				lifetime: 2000,

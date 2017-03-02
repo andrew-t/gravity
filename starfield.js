@@ -1,29 +1,35 @@
 class Starfield {
-	constructor(canvas) {
-		this.canvas = canvas;
-		this.startTime = Date.now();
-		this.starCount = 100;
-		this.maxStarRadius = 3;
-	}
+	constructor(canvas, opts = {}) {
+		if (!opts.starCount) opts.starCount = 100;
+		if (!opts.maxStarRadius) opts.maxStarRadius = 3;
+		if (!opts.lightness) opts.lightness = '80%';
 
-	draw(ctx) {
-		if (!ctx)
-			ctx = this.canvas.getContext('2d');
+		this.stars = [];
+		this.canvas = canvas;
+
+		for (let n = 0; n < opts.starCount; ++n)
+			this.stars.push({
+				colour: `hsla(
+					${Math.random() * 360},
+					${Math.random() * 50}%,
+					${opts.lightness},
+					${Math.random() * 0.5 + 0.5})`,
+				circle: new Circle(new Vector(
+						Math.random() * canvas.width,
+						Math.random() * canvas.height),
+					Math.random() * opts.maxStarRadius)
+			});
+
+		const ctx = canvas.getContext('2d');
 		ctx.fillStyle = 'black';
-		ctx.fillRect(-10, -10, this.canvas.width + 20, this.canvas.height + 20);
-		const r = new SeededRandom(this.startTime);
-		for (let n = 0; n < this.starCount; ++n) {
-			ctx.strokeStyle = 'transparent';
-			ctx.fillStyle = `hsla(
-				${r.nextFloat() * 360},
-				${r.nextFloat() * 50}%,
-				80%,
-				${r.nextFloat() * 0.5 + 0.5})`;
-			new Circle(new Vector(
-						r.nextFloat() * this.canvas.width,
-						r.nextFloat() * this.canvas.height),
-					r.nextFloat() * this.maxStarRadius)
-				.draw(ctx);
-		}
+		ctx.fillRect(-10, -10, canvas.width + 20, canvas.height + 20);
+		ctx.strokeStyle = 'transparent';
+		this.stars.forEach(star => {
+			ctx.fillStyle = star.colour;
+			star.circle.draw(ctx);
+		});
+
+		if (opts.starSystem)
+			opts.starSystem.drawBacks(ctx);
 	}
 }
