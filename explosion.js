@@ -5,7 +5,8 @@ function explode(universe, position, {
 		destroyOnImpact,
 		lifetime,
 		debrisCount,
-		globalCompositeOperation
+		globalCompositeOperation,
+		baseColour
 	}) {
 
 	if (!velocity) velocity = Vector.zero;
@@ -16,6 +17,7 @@ function explode(universe, position, {
 	if (!lifetime) lifetime = 1000;
 	if (!globalCompositeOperation)
 		globalCompositeOperation = 'screen';
+	if (!baseColour) baseColour = '64, 16, 0';
 
 	const startTime = universe.timestream.t;
 
@@ -36,7 +38,8 @@ function explode(universe, position, {
 
 		// Set the colour:
 		Object.defineProperty(particle, 'colour', {
-			get: () => 'rgba(64, 16, 0, ' +
+			get: () => 'rgba(' +
+				baseColour + ', ' +
 				((lifetime + startTime - universe.timestream.t)
 					/ lifetime)
 				+ ')'
