@@ -30,17 +30,23 @@ class Universe {
 				const motion = particle.advance(
 						interval / 1000, this.starSystem);
 				if (particle.checkCollisions) {
-					const collision = this.starSystem.collision(
+					const planetCollision = this.starSystem.collision(
 							motion, particle.radius);
-					if (collision)
-						particle.impact(collision);
+					if (planetCollision) {
+						particle.impact(planetCollision);
+						planetCollision.obstacle.addCrater(
+							planetCollision.location,
+							this.craterSize);
+					}
 					if (particle.isBullet) {
 						ongoingShot = true;
 						if (particle.hasClearedShooter)
 							this.players.forEach(player => {
-								if (player.collision(motion, particle.radius)) {
+								const playerCollision =
+									player.collision(motion, particle.radius);
+								if (playerCollision) {
 									player.explode();
-									particle.impact(collision);
+									particle.impact(playerCollision);
 									this.gameState.state = Universe.GAME_OVER;
 								}
 							});

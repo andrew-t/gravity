@@ -14,8 +14,6 @@ class Player {
 		missile.owner = this;
 		missile.on('impact', collision => {
 			missile.destroy();
-			collision.obstacle.addCrater(
-				collision.location, this.universe.craterSize);
 			Explosions.full(this.universe,
 				missile.location, missile.velocity);
 		});

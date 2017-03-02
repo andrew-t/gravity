@@ -15,6 +15,7 @@ class Particle {
 		this.disposable = def('disposable', false);
 
 		this.destroyed = false;
+		this.createdAt = universe.timestream.t;
 
 		function def(name, defVal) {
 			return (!opts || !opts.hasOwnProperty(name))
@@ -27,19 +28,26 @@ class Particle {
 		return new Circle(this.location, this.radius);
 	}
 
+	get age() {
+		return this.universe.timestream.t - this.createdAt;
+	}
+
 	draw(ctx) {
+		if (!this.destroyed)
+			this._triggerEvent('before-draw', { ctx });
 		if (this.destroyed)
 			return;
-		const globalCompositeOperation =
-			ctx.globalCompositeOperation;
+		const globalCompositeOperation = ctx.globalCompositeOperation,
+			globalAlpha = ctx.globalAlpha;
 		ctx.fillStyle = this.colour;
 		ctx.strokeStyle = 'transparent';
 		if (this.globalCompositeOperation)
-			ctx.globalCompositeOperation =
-				this.globalCompositeOperation;
+			ctx.globalCompositeOperation = this.globalCompositeOperation;
+		if (this.globalAlpha)
+			ctx.globalAlpha = this.globalAlpha;
 		this.circle.draw(ctx);
-		ctx.globalCompositeOperation =
-			globalCompositeOperation;
+		ctx.globalCompositeOperation = globalCompositeOperation;
+		ctx.globalAlpha = globalAlpha;
 	}
 
 	advance(interval) {

@@ -9,8 +9,8 @@ const Explosions = {
 				violence: 400,
 				lifetime: 5000,
 				destroyOnImpact: false,
-				debrisRadius: 20,
-				debrisCount: 300,
+				debrisRadius: 50,
+				debrisCount: 70,
 				maxOpacity: 0.25,
 				baseColour: '64, 64, 64',
 				globalCompositeOperation: 'source-over'
@@ -21,7 +21,8 @@ const Explosions = {
 				velocity,
 				violence: 750,
 				lifetime: 1500,
-				debrisCount: 500,
+				debrisCount: 100,
+				debrisRadius: 30,
 				destroyOnImpact: false
 			});
 		// Glowing embers
@@ -33,7 +34,8 @@ const Explosions = {
 				debrisCount: 50,
 				lifetime: 2000,
 				debrisRadius: 3,
-				baseColour: '255, 255, 255'
+				baseColour: '255, 255, 255',
+				smooth: false
 			});
 	},
 
@@ -46,7 +48,8 @@ const Explosions = {
 		debrisCount,
 		maxOpacity,
 		globalCompositeOperation,
-		baseColour
+		baseColour,
+		smooth
 	}) {
 
 		if (!velocity) velocity = Vector.zero;
@@ -59,6 +62,7 @@ const Explosions = {
 			globalCompositeOperation = 'screen';
 		if (!baseColour) baseColour = '128, 16, 0';
 		if (!maxOpacity) maxOpacity = 1;
+		if (smooth === undefined) smooth = true;
 
 		const startTime = universe.timestream.t;
 
@@ -74,16 +78,24 @@ const Explosions = {
 					{
 						checkCollisions: destroyOnImpact,
 						globalCompositeOperation,
-						disposable: true
+						disposable: true,
+						colour: 'rgb(' + baseColour + ')'
 					});
 
-			// Set the colour:
-			Object.defineProperty(particle, 'colour', {
-				get: () => 'rgba(' +
-					baseColour + ', ' +
-					((lifetime + startTime - universe.timestream.t)
-						* maxOpacity / lifetime)
-					+ ')'
+			particle.on('before-draw', e => {
+				if (particle.age > lifetime)
+					particle.destroy();
+				particle.globalAlpha =
+					(lifetime + startTime - universe.timestream.t)
+						* maxOpacity / lifetime;
+				if (smooth) {
+					const gradient = e.ctx.createRadialGradient(
+						particle.location.x, particle.location.y, debrisRadius,
+						particle.location.x, particle.location.y, 0);
+					gradient.addColorStop(0, 'rgba(' + baseColour + ', 0)');
+					gradient.addColorStop(1, 'rgba(' + baseColour + ', 1)');
+					particle.colour = gradient;
+				}
 			});
 
 			if (destroyOnImpact)
