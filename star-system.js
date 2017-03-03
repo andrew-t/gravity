@@ -25,10 +25,13 @@ class StarSystem {
 				nextPlanetSearch:
 				for (let planetAttempt = 0; planetAttempt < 100; ++planetAttempt) {
 					const r = Math.random() * planetRadiusVariation + minPlanetRadius,
-						candidate = new Planet(new Vector(
-							Math.random() * (planetAreaWidth - 2 * r) + r + planetMarginSide,
-							Math.random() * (planetAreaHeight - 2 * r) + r + planetMarginTop),
-							r,
+						candidate = new Planet(this,
+							new Vector(
+								Math.random() * (planetAreaWidth - 2 * r) +
+									r + planetMarginSide,
+								Math.random() * (planetAreaHeight - 2 * r) +
+									r + planetMarginTop),
+								r,
 							density * Math.pow(r, this.densityPower));
 					for (let planet of this.planets)
 						if (planet.location.distanceTo(candidate.location) <
@@ -46,12 +49,21 @@ class StarSystem {
 			console.log('Done building star system');
 			break systemSearch;
 		}
-		console.log(this.planets)
+		console.log(this.planets);
+		this.forceRedraw();
+	}
 
+	forceRedraw() {
+		this.image = null;
 	}
 
 	draw(ctx) {
-		this.planets.forEach(planet => planet.draw(ctx));
+		if (this.image)
+			ctx.putImageData(this.image, 0, 0);
+		else {
+			this.planets.forEach(planet => planet.draw(ctx));
+			this.image = ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
+		}
 	}
 	drawBacks(ctx) {
 		this.planets.forEach(planet => planet.drawBack(ctx));

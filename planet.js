@@ -1,5 +1,6 @@
 class Planet {
-	constructor(location, radius, mass) {
+	constructor(starSystem, location, radius, mass) {
+		this.starSystem = starSystem;
 		this.location = location;
 		this.radius = radius;
 		this.radiusSquared = radius * radius;
@@ -23,6 +24,11 @@ class Planet {
 		ctx.globalCompositeOperation = 'destination-out';
 		ctx.fillStyle = 'black';
 		this.craters.forEach(crater => crater.draw(ctx));
+		ctx.globalCompositeOperation = 'source-atop';
+		ctx.fillStyle = 'transparent';
+		ctx.strokeStyle = '#840';
+		ctx.strokeWidth = 8;
+		this.craters.forEach(crater => crater.draw(ctx));
 		ctx.globalCompositeOperation = 'source-over';
 	}
 
@@ -34,20 +40,56 @@ class Planet {
 
 	addCrater(location, radius) {
 		this.craters.push(new Circle(location, radius));
+		this.starSystem.forceRedraw();
 	}
 
 	get circle() {
 		return new Circle(this.location, this.radius);
 	}
 
-	collision(lineSegment, radius) {
-		// TODO: do this properly
-		if (this.location.distanceTo(lineSegment.end) <= this.radius + radius) {
-			for (let crater of this.craters)
-				if (crater.centre.distanceTo(lineSegment.end) <= crater.radius + radius)
-					return null;
-			return new Collision(1, lineSegment.end, this);
-		}
+	collision(lineSegment, missileRadius) {
+		const main = lineCircleIntersection(lineSegment, this.circle, missileRadius);
+		if (!main)
+			return null;
+
+		let start = lineSegmentProjection(lineSegment, main.start),
+			end = lineSegmentProjection(lineSegment, main.end);
+		if (start > end)
+			[ start, end ] = [ end, start ];
+		console.log('potential collision from ' + start + ' to ' + end);
+		if (end < 0 || start > 1)
+			return null;
+
+		if (end > 1) end = 1;
+		if (start < 0) start = 0;
+		console.log('revised potential collision from ' + start + ' to ' + end);
+
+		const nonCrater = new OneDimensionalSet();
+		nonCrater.add(start, end);
+
+		this.craters.forEach(crater => {
+			const craterIntersection = lineCircleIntersection(
+				lineSegment, crater, -missileRadius);
+			if (craterIntersection) {
+				console.log(craterIntersection.toString())
+				const start = lineSegmentProjection(lineSegment, craterIntersection.start),
+					end = lineSegmentProjection(lineSegment, craterIntersection.end);
+				console.log('crater from ' + start + ' to ' + end);
+				nonCrater.remove(start, end);
+			}
+		});
+
+		console.log(nonCrater.parts);
+
+		const el = nonCrater.firstElement();
+		if (el == null)
+			return null;
+
+		console.log('collision at ' + el)
+
+		return new Collision(el,
+			fractionalLineSegment(lineSegment, el),
+			this);
 	}
 
 	gravityAt(point, densityPower = 3) {

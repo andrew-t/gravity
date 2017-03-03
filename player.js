@@ -15,7 +15,7 @@ class Player {
 		missile.on('impact', collision => {
 			missile.destroy();
 			Explosions.full(this.universe,
-				missile.location, missile.velocity);
+				collision.location, missile.velocity);
 		});
 		this.universe.timestream.setTimeout(() => {
 			if (!missile.destroyed) {

@@ -1,0 +1,20 @@
+{
+  "name": "gravity-2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "chai": "^3.5.0"
+  },
+  "devDependencies": {
+    "mocha": "^3.2.0"
+  },
+  "scripts": {
+    "test": "./node_modules/.bin/mocha"
+  },
+  "author": "",
+  "license": "ISC"
+}
