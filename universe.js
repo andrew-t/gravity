@@ -5,12 +5,29 @@ class Universe {
 		this.players = [];
 		this.particles = new Set();
 
+		let _state = Universe.TARGETTING,
+			_currentPlayer = 0;
+		const self = this;
 		this.gameState = {
-			currentPlayer: 0,
-			state: Universe.TARGETTING
+			get currentPlayer() { return _currentPlayer; },
+			set currentPlayer(val) {
+				_currentPlayer = val;
+				self._triggerEvent('change-player', val);
+			},
+			get state() { return _state; },
+			set state(val) {
+				_state = val;
+				self._triggerEvent('state-change', val);
+			}
 		};
+		setTimeout(() => {
+			self._triggerEvent('state-change', _state);
+			self._triggerEvent('change-player', _currentPlayer);
+		});
 
 		this.craterSize = 25;
+		this.maxShotVelocity = 400;
+		this.shotVelicityMultiplier = 0.8;
 
 		this.timestream = new Timestream();
 		this.timestream.maxInterval = 100;
@@ -80,13 +97,30 @@ class Universe {
 		this._clickListener = e => {
 			if (this.gameState.state != Universe.TARGETTING)
 				return;
-			const mouse = Vector.canvasMouseVector(this.canvas, e);
-			this.currentPlayer.shoot(
-				mouse.minus(this.currentPlayer.location)
-					.times(1));
+			this.currentPlayer.shoot(this.mouseToShot(e));
 			this.endTurn();
 		};
 		canvas.addEventListener('click', this._clickListener);
+
+		this._moveListener = e => {
+			if (this.gameState.state != Universe.TARGETTING)
+				return;
+			const shot = this.mouseToShot(e);
+			document.getElementById('shot-power')
+				.innerHTML = Math.round(shot.length * 100 / this.maxShotVelocity);
+			document.getElementById('shot-angle')
+				.innerHTML = Math.round(shot.angle * 180 / Math.PI);
+		};
+		canvas.addEventListener('mousemove', this._moveListener);
+	}
+
+	mouseToShot(e) {
+		const mouse = Vector.canvasMouseVector(this.canvas, e);
+		let shot = mouse.minus(this.currentPlayer.location)
+				.times(this.shotVelicityMultiplier);
+		if (shot.length > this.maxShotVelocity)
+			shot = shot.normalise().times(this.maxShotVelocity);
+		return shot;
 	}
 
 	addPlayer(location, size) {
@@ -127,9 +161,12 @@ class Universe {
 	destroy() {
 		this._cancelUpdates();
 		this.canvas.removeEventListener(this._clickListener);
+		this.canvas.removeEventListener(this._moveListener);
 	}
 }
 
 Universe.TARGETTING = Symbol('Targetting');
 Universe.ONGOING_SHOT = Symbol('Ongoing Shot');
 Universe.GAME_OVER = Symbol('Game Over');
+
+eventise(Universe);
