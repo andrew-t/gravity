@@ -57,40 +57,29 @@ class Planet {
 			end = lineSegment.parametricTOfPoint(main.end);
 		if (start > end)
 			[ start, end ] = [ end, start ];
-		// console.log('potential collision from ' + start + ' to ' + end);
 		if (end < 0 || start > 1)
 			return null;
-
 		if (end > 1) end = 1;
 		if (start < 0) start = 0;
-		// console.log('revised potential collision from ' + start + ' to ' + end);
 
 		const nonCrater = new OneDimensionalSet();
 		nonCrater.add(start, end);
-
 		this.craters.forEach(crater => {
 			const craterIntersection = lineSegment.intersectionWithCircle(
 					new Circle(crater.centre, crater.radius - missileRadius));
 			if (craterIntersection) {
-				console.log(craterIntersection.toString())
 				const start = lineSegment.parametricTOfPoint(craterIntersection.start),
 					end = lineSegment.parametricTOfPoint(craterIntersection.end);
-				// console.log('crater from ' + start + ' to ' + end);
 				nonCrater.remove(start, end);
 			}
 		});
 
-		// console.log(nonCrater.parts);
-
 		const el = nonCrater.firstElement();
-		if (el == null)
-			return null;
-
-		// console.log('collision at ' + el)
-
-		return new Collision(el,
-			lineSegment.atParametricT(el),
-			this);
+		return el == null
+			? null
+			: new Collision(el,
+				lineSegment.atParametricT(el),
+				this);
 	}
 
 	gravityAt(point, densityPower = 3) {
