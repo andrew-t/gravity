@@ -34,7 +34,7 @@ class Planet {
 
 	drawBack(ctx) {
 		ctx.strokeStyle = 'transparent';
-		ctx.fillStyle = `hsl(${this.hue}, 75%, 25%)`;
+		ctx.fillStyle = `hsl(${this.hue}, 75%, 15%)`;
 		this.circle.draw(ctx);
 	}
 
@@ -48,47 +48,48 @@ class Planet {
 	}
 
 	collision(lineSegment, missileRadius) {
-		const main = lineCircleIntersection(lineSegment, this.circle, missileRadius);
+		const main = lineSegment.intersectionWithCircle(
+			new Circle(this.location, this.radius + missileRadius));
 		if (!main)
 			return null;
 
-		let start = lineSegmentProjection(lineSegment, main.start),
-			end = lineSegmentProjection(lineSegment, main.end);
+		let start = lineSegment.parametricTOfPoint(main.start),
+			end = lineSegment.parametricTOfPoint(main.end);
 		if (start > end)
 			[ start, end ] = [ end, start ];
-		console.log('potential collision from ' + start + ' to ' + end);
+		// console.log('potential collision from ' + start + ' to ' + end);
 		if (end < 0 || start > 1)
 			return null;
 
 		if (end > 1) end = 1;
 		if (start < 0) start = 0;
-		console.log('revised potential collision from ' + start + ' to ' + end);
+		// console.log('revised potential collision from ' + start + ' to ' + end);
 
 		const nonCrater = new OneDimensionalSet();
 		nonCrater.add(start, end);
 
 		this.craters.forEach(crater => {
-			const craterIntersection = lineCircleIntersection(
-				lineSegment, crater, -missileRadius);
+			const craterIntersection = lineSegment.intersectionWithCircle(
+					new Circle(crater.centre, crater.radius - missileRadius));
 			if (craterIntersection) {
 				console.log(craterIntersection.toString())
-				const start = lineSegmentProjection(lineSegment, craterIntersection.start),
-					end = lineSegmentProjection(lineSegment, craterIntersection.end);
-				console.log('crater from ' + start + ' to ' + end);
+				const start = lineSegment.parametricTOfPoint(craterIntersection.start),
+					end = lineSegment.parametricTOfPoint(craterIntersection.end);
+				// console.log('crater from ' + start + ' to ' + end);
 				nonCrater.remove(start, end);
 			}
 		});
 
-		console.log(nonCrater.parts);
+		// console.log(nonCrater.parts);
 
 		const el = nonCrater.firstElement();
 		if (el == null)
 			return null;
 
-		console.log('collision at ' + el)
+		// console.log('collision at ' + el)
 
 		return new Collision(el,
-			fractionalLineSegment(lineSegment, el),
+			lineSegment.atParametricT(el),
 			this);
 	}
 

@@ -2,9 +2,7 @@ const expect = require('chai').expect;
 
 const {
 		lineCircleIntersection,
-		lineSegmentProjection,
-		fractionalLineSegment,
-		OneDimensionalSet
+		lineSegmentProjection
 	} = require('../collision-util'),
 	// TODO: switch when I build a 'line' class
 	Line = require('../xy/line-segment'),

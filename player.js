@@ -10,6 +10,7 @@ class Player {
 		const missile = this.universe.addParticle(
 			this.location, initialVelocity, 5);
 		missile.isBullet = true;
+		missile.destroysPlanet = true;
 		missile.hasClearedShooter = false;
 		missile.owner = this;
 		missile.on('impact', collision => {

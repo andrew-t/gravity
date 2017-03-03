@@ -33,9 +33,25 @@ class Universe {
 							motion, particle.radius);
 					if (planetCollision) {
 						particle.impact(planetCollision);
-						planetCollision.obstacle.addCrater(
-							planetCollision.location,
-							this.craterSize);
+						if (particle.destroysPlanet) {
+							planetCollision.obstacle.addCrater(
+								planetCollision.location,
+								this.craterSize);
+							// Bits of planet
+							Explosions.single(this, planetCollision.location,
+								{
+									velocity: Vector.zero,
+									violence: 400,
+									destroyOnImpact: true,
+									debrisCount: 250,
+									lifetime: 100000,
+									debrisRadius: 3,
+									globalCompositeOperation: 'source-over',
+									baseColour: `${planetCollision.obstacle.hue}, 75%, 20%`,
+									colourModel: 'hsl',
+									smooth: false
+								});
+						}
 					}
 					if (particle.isBullet) {
 						ongoingShot = true;

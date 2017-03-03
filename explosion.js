@@ -49,7 +49,8 @@ const Explosions = {
 		maxOpacity,
 		globalCompositeOperation,
 		baseColour,
-		smooth
+		smooth,
+		colourModel
 	}) {
 
 		if (!velocity) velocity = Vector.zero;
@@ -63,6 +64,7 @@ const Explosions = {
 		if (!baseColour) baseColour = '128, 16, 0';
 		if (!maxOpacity) maxOpacity = 1;
 		if (smooth === undefined) smooth = true;
+		if (!colourModel) colourModel = 'rgb';
 
 		const startTime = universe.timestream.t;
 
@@ -79,7 +81,7 @@ const Explosions = {
 						checkCollisions: destroyOnImpact,
 						globalCompositeOperation,
 						disposable: true,
-						colour: 'rgb(' + baseColour + ')'
+						colour: colourModel + '(' + baseColour + ')'
 					});
 
 			particle.on('before-draw', e => {
@@ -92,8 +94,8 @@ const Explosions = {
 					const gradient = e.ctx.createRadialGradient(
 						particle.location.x, particle.location.y, debrisRadius,
 						particle.location.x, particle.location.y, 0);
-					gradient.addColorStop(0, 'rgba(' + baseColour + ', 0)');
-					gradient.addColorStop(1, 'rgba(' + baseColour + ', 1)');
+					gradient.addColorStop(0, colourModel + 'a(' + baseColour + ', 0)');
+					gradient.addColorStop(1, colourModel + 'a(' + baseColour + ', 1)');
 					particle.colour = gradient;
 				}
 			});
