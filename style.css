@@ -5,3 +5,11 @@ canvas {
 	width: 100vw;
 	height: 65vw;
 }
+
+#data-panel {
+	position: absolute;
+	top: 2em;
+	right: 2em;
+	background: rgba(0, 128, 0, 0.5);
+	border: 1px solid green;
+}
