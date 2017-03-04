@@ -84,7 +84,7 @@ class Universe {
 									player.explode();
 									particle.impact(playerCollision);
 									document.getElementById('winner')
-										.innerHTML = player.name;
+										.innerHTML = this.otherPlayer(player).name;
 									this.gameState.state = Universe.GAME_OVER;
 								}
 							});
@@ -129,6 +129,10 @@ class Universe {
 				.innerHTML = Math.round(shot.angle * 180 / Math.PI);
 		};
 		canvas.addEventListener('mousemove', this._moveListener);
+	}
+
+	otherPlayer(player) {
+		return this.players[1 - this.players.indexOf(player)];
 	}
 
 	mouseToShot(e) {

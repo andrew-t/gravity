@@ -35,11 +35,7 @@ class Particle {
 	draw(ctx) {
 		if (this.destroyed ||
 			isNaN(this.location.x) ||
-			isNaN(this.location.y) ||
-			this.location.x < -this.radius ||
-			this.location.y < -this.radius ||
-			this.location.x > this.universe.width + this.radius ||
-			this.location.y > this.universe.height + this.radius)
+			isNaN(this.location.y))
 			return;
 		if (!this.destroyed)
 			this._triggerEvent('before-draw', { ctx });
