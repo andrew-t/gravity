@@ -29,12 +29,20 @@ document.addEventListener('DOMContentLoaded', e => {
 	}
 
 	universe.on('state-change', state => {
+		document.body.classList.remove('pregame');
 		document.body.classList.remove('targetting');
 		document.body.classList.remove('ongoing-shot');
 		document.body.classList.remove('game-over');
+		document.body.classList.remove('powering-up');
 		switch (state) {
+			case Universe.PREGAME:
+				document.body.classList.add('pregame');
+				break;
 			case Universe.TARGETTING:
 				document.body.classList.add('targetting');
+				break;
+			case Universe.POWERING:
+				document.body.classList.add('powering-up');
 				break;
 			case Universe.ONGOING_SHOT:
 				document.body.classList.add('ongoing-shot');
@@ -50,4 +58,9 @@ document.addEventListener('DOMContentLoaded', e => {
 		document.body.classList.add(`player-${player + 1}`);
 	});
 	
+	document.addEventListener('click', e => {
+		if (universe.gameState.state == Universe.PREGAME)
+			universe.startGame();
+	});
+
 });

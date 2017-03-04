@@ -8,13 +8,13 @@ class Universe {
 		this.playerMargin = 100;
 		this.playerRadius = 20;
 		this.maxShotVelocity = 400;
-		this.shotVelicityMultiplier = 0.8;
+		this.shotPowerUpSpeed = 2000 / this.maxShotVelocity;
 
 		this.starSystem = new StarSystem(this);
 		this.players = [];
 		this.particles = new Set();
 
-		let _state = Universe.TARGETTING,
+		let _state = Universe.PREGAME,
 			_currentPlayer = 0;
 		const self = this;
 		this.gameState = {
@@ -27,6 +27,10 @@ class Universe {
 			set state(val) {
 				_state = val;
 				self._triggerEvent('state-change', val);
+			},
+			shot: {
+				angle: Vector.zero,
+				power: 0
 			}
 		};
 		setTimeout(() => {
@@ -37,8 +41,29 @@ class Universe {
 		this.timestream = new Timestream();
 		this.timestream.maxInterval = 100;
 		this.timestream.on('frame', interval => this.withTransformedCanvas(ctx => {
+			if (this.gameState.state == Universe.POWERING) {
+				this.gameState.shot.power += this.shotPowerUpSpeed;
+				if (this.gameState.shot.power >= this.maxShotVelocity)
+					this.gameState.shot.power = this.maxShotVelocity;
+				this.updateShotAngle();
+			}
 			let ongoingShot = false;
 			this.drawBackground(ctx);
+			if (this.gameState.state == Universe.TARGETTING ||
+				this.gameState.state == Universe.POWERING) {
+				ctx.fillStyle = 'transparent';
+				ctx.strokeStyle = '#00ff00';
+				ctx.lineWidth = 2;
+				new Circle(this.currentPlayer.location, 30).draw(ctx);
+				new LineSegment(
+						this.currentPlayer.location
+							.plus(this.gameState.shot.angle.times(30)),
+						this.currentPlayer.location
+							.plus(this.gameState.shot.angle.times(30 +
+								Math.max(10, this.gameState.shot.power
+									/ this.maxShotVelocity * 100))))
+					.draw(ctx);
+			}
 			this.particles.forEach(particle => {
 				if (interval == this.maxInterval &&
 					particle.disposable)
@@ -96,8 +121,10 @@ class Universe {
 				particle.draw(ctx);
 			});
 			if (!ongoingShot &&
-				this.gameState.state == Universe.ONGOING_SHOT)
+				this.gameState.state == Universe.ONGOING_SHOT) {
 				this.gameState.state = Universe.TARGETTING;
+				this.gameState.shot.power = 0;
+			}
 		}));
 
 		this.addPlayer(
@@ -111,24 +138,62 @@ class Universe {
 			'img/ship2.png')
 				.name = 'Player Two';
 
-		this._clickListener = e => {
-			if (this.gameState.state != Universe.TARGETTING)
-				return;
-			this.currentPlayer.shoot(this.mouseToShot(e));
-			this.endTurn();
-		};
-		canvas.addEventListener('click', this._clickListener);
+		this._canvasListeners = {};
 
-		this._moveListener = e => {
-			if (this.gameState.state != Universe.TARGETTING)
+		this.addCanvasListener('mousedown', e => {
+			if (this.gameState.state == Universe.TARGETTING) {
+				this.gameState.shot.power = 0;
+				this.updateShotAngle(e);
+				this.gameState.state = Universe.POWERING;
+			}
+		});
+
+		this.addCanvasListener('mouseup', e => {
+			if (this.gameState.state != Universe.POWERING)
 				return;
-			const shot = this.mouseToShot(e);
-			document.getElementById('shot-power')
-				.innerHTML = Math.round(shot.length * 100 / this.maxShotVelocity);
-			document.getElementById('shot-angle')
-				.innerHTML = Math.round(shot.angle * 180 / Math.PI);
-		};
-		canvas.addEventListener('mousemove', this._moveListener);
+			this.updateShotAngle(e);
+			if (this.gameState.shot.power >= this.maxShotVelocity)
+				this.gameState.shot.power = this.maxShotVelocity;
+			this.currentPlayer.shoot(this.gameState.shot.angle
+					.times(this.gameState.shot.power));
+			this.endTurn();
+		});
+
+		this.addCanvasListener('mouseout', e => {
+			if (this.gameState.state == Universe.POWERING)
+				this.gameState.state = Universe.TARGETTING;
+		});
+
+		this.addCanvasListener('mousemove', e => {
+			if (this.gameState.state == Universe.POWERING ||
+				this.gameState.state == Universe.TARGETTING)
+				this.updateShotAngle(e);
+		});
+	}
+
+	startGame() {
+		this.gameState.state = Universe.TARGETTING;
+	}
+
+	updateShotAngle(e) {
+		if (e) {
+			this.gameState.shot.angle = this.mouseVector(e)
+				.minus(this.currentPlayer.location)
+				.normalise();
+			document.getElementById('shot-angle').innerHTML =
+				Math.round(this.gameState.shot.angle.angle
+					* 180 / Math.PI);
+		}
+		document.getElementById('shot-power').innerHTML =
+			Math.round(this.gameState.shot.power
+				* 100 / this.maxShotVelocity);
+	}
+
+	addCanvasListener(event, callback) {
+		if (!this._canvasListeners[event])
+			this._canvasListeners[event] = [];
+		this._canvasListeners[event].push(callback);
+		this._canvas.addEventListener(event, callback);
 	}
 
 	otherPlayer(player) {
@@ -210,12 +275,15 @@ class Universe {
 
 	destroy() {
 		this._cancelUpdates();
-		this._canvas.removeEventListener(this._clickListener);
-		this._canvas.removeEventListener(this._moveListener);
+		for (let event in this._canvasListeners)
+			this._canvasListeners[event].forEach(listener =>
+				this._canvas.removeEventListener(event, listener));
 	}
 }
 
+Universe.PREGAME = Symbol('Pre-game');
 Universe.TARGETTING = Symbol('Targetting');
+Universe.POWERING = Symbol('Powering Up');
 Universe.ONGOING_SHOT = Symbol('Ongoing Shot');
 Universe.GAME_OVER = Symbol('Game Over');
 

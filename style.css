@@ -1,5 +1,6 @@
 body {
 	background: black;
+	font-size: 1vw;
 }
 
 canvas {
@@ -10,30 +11,50 @@ canvas {
 	height: 100vh;
 }
 
-#data-panel {
-	position: absolute;
-	top: 1em;
+.panel {
 	background: url('./img/panel.png');
 	border: 1px solid #0f0;
-	width: 8em;
-	border-radius: 0.5em;
 	font-family: 'Slackey', cursive;
 	color: #0f0;
 	padding: 1em;
 	font-size: 2em;
 	box-shadow: 0 0 1em #0f0;
 	text-shadow: 0 0 .2em #0f0;
+	border-radius: 0.5em;
+}
+
+body:not(.pregame) #intro {
 	display: none;
 }
-.player-1.targetting #data-panel {
+#intro {
+	position: absolute;
+	left: 25vw;
+	top: 15vh;
+	right: 25vw;
+	bottom: 15vh;
+	overflow: auto;
+}
+
+h1 {
+	text-align: center;
+	margin-top: 0;
+}
+
+#data-panel {
+	position: absolute;
+	top: 1em;
+	width: 8em;
+	display: none;
+}
+.player-1.powering-up #data-panel {
 	right: 1em;
 	display: block;
 }
-.player-2.targetting #data-panel {
+.player-2.powering-up #data-panel {
 	left: 1em;
 	display: block;
 }
-body:not(.targetting) #shot {
+body:not(.powering-up) #shot {
 	display: none;
 }
 body:not(.game-over) #winner-full {
@@ -57,9 +78,5 @@ body:not(.game-over) #winner-full {
 
 #scores {
 	text-align: center;
-	display: none;
-}
-
-body:not(.targetting) #shot {
 	display: none;
 }

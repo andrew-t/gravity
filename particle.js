@@ -37,8 +37,7 @@ class Particle {
 			isNaN(this.location.x) ||
 			isNaN(this.location.y))
 			return;
-		if (!this.destroyed)
-			this._triggerEvent('before-draw', { ctx });
+		this._triggerEvent('before-draw', { ctx });
 		if (this.destroyed)
 			return;
 		const globalCompositeOperation = ctx.globalCompositeOperation,
