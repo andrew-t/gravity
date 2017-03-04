@@ -5,7 +5,7 @@ const Explosions = {
 		// Smoke
 		Explosions.single(universe, location,
 			{
-				velocity: velocity.times(0.2),
+				velocity: velocity.times(0.1),
 				violence: 200,
 				lifetime: 5000,
 				destroyOnImpact: false,
@@ -18,7 +18,7 @@ const Explosions = {
 		// Fireball
 		Explosions.single(universe, location,
 			{
-				velocity,
+				velocity: velocity.times(0.5),
 				violence: 450,
 				lifetime: 1500,
 				debrisCount: 100,
@@ -28,7 +28,7 @@ const Explosions = {
 		// Glowing embers
 		Explosions.single(universe, location,
 			{
-				velocity,
+				velocity: velocity.times(0.5),
 				violence: 350,
 				destroyOnImpact: false,
 				debrisCount: 50,

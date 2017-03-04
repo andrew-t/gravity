@@ -5,15 +5,34 @@ class Universe {
 		this.width = 1440;
 		this.height = 768;
 		this.craterSize = 25;
+		this.playerMargin = 100;
+		this.playerRadius = 20;
+		this.maxShotVelocity = 400;
+		this.shotVelicityMultiplier = 0.8;
 
 		this.starSystem = new StarSystem(this);
 		this.players = [];
 		this.particles = new Set();
 
+		let _state = Universe.TARGETTING,
+			_currentPlayer = 0;
+		const self = this;
 		this.gameState = {
-			currentPlayer: 0,
-			state: Universe.TARGETTING
+			get currentPlayer() { return _currentPlayer; },
+			set currentPlayer(val) {
+				_currentPlayer = val;
+				self._triggerEvent('change-player', val);
+			},
+			get state() { return _state; },
+			set state(val) {
+				_state = val;
+				self._triggerEvent('state-change', val);
+			}
 		};
+		setTimeout(() => {
+			self._triggerEvent('state-change', _state);
+			self._triggerEvent('change-player', _currentPlayer);
+		});
 
 		this.timestream = new Timestream();
 		this.timestream.maxInterval = 100;
@@ -79,19 +98,40 @@ class Universe {
 				this.gameState.state = Universe.TARGETTING;
 		}));
 
-		this.addPlayer(new Vector(50, this.height / 2), 20);
-		this.addPlayer(new Vector(this.width - 50, this.height / 2), 20);
+		this.addPlayer(
+			new Vector(this.playerMargin, this.height / 2),
+			this.playerRadius);
+		this.addPlayer(
+			new Vector(this.width - this.playerMargin, this.height / 2),
+			this.playerRadius);
 
 		this._clickListener = e => {
 			if (this.gameState.state != Universe.TARGETTING)
 				return;
-			const mouse = this.mouseVector(e);
-			this.currentPlayer.shoot(
-				mouse.minus(this.currentPlayer.location)
-					.times(1));
+			this.currentPlayer.shoot(this.mouseToShot(e));
 			this.endTurn();
 		};
 		canvas.addEventListener('click', this._clickListener);
+
+		this._moveListener = e => {
+			if (this.gameState.state != Universe.TARGETTING)
+				return;
+			const shot = this.mouseToShot(e);
+			document.getElementById('shot-power')
+				.innerHTML = Math.round(shot.length * 100 / this.maxShotVelocity);
+			document.getElementById('shot-angle')
+				.innerHTML = Math.round(shot.angle * 180 / Math.PI);
+		};
+		canvas.addEventListener('mousemove', this._moveListener);
+	}
+
+	mouseToShot(e) {
+		const mouse = this.mouseVector(e);
+		let shot = mouse.minus(this.currentPlayer.location)
+				.times(this.shotVelicityMultiplier);
+		if (shot.length > this.maxShotVelocity)
+			shot = shot.normalise().times(this.maxShotVelocity);
+		return shot;
 	}
 
 	mouseVector(e) {
@@ -160,9 +200,12 @@ class Universe {
 	destroy() {
 		this._cancelUpdates();
 		this._canvas.removeEventListener(this._clickListener);
+		this._canvas.removeEventListener(this._moveListener);
 	}
 }
 
 Universe.TARGETTING = Symbol('Targetting');
 Universe.ONGOING_SHOT = Symbol('Ongoing Shot');
 Universe.GAME_OVER = Symbol('Game Over');
+
+eventise(Universe);

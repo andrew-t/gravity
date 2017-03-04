@@ -2,8 +2,7 @@ class StarSystem {
 	constructor(universe, planetCount = 5) {
 		this.universe = universe;
 
-		// TODO: Generate?
-		const planetMarginSide = 100,
+		const planetMarginSide = 200,
 			planetMarginTop = 50,
 			planetMargin = 80,
 			minPlanetRadius = 50,
@@ -12,6 +11,7 @@ class StarSystem {
 			planetRadiusVariation = maxPlanetRadius - minPlanetRadius,
 			planetAreaWidth = universe.width - planetMarginSide * 2,
 			planetAreaHeight = universe.height - planetMarginTop * 2;
+
 		this.densityPower = 2;
 		// mass = density * radius ^ densityPower
 		// should be 3 in reality, or 2 in ideal 2D world

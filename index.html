@@ -2,6 +2,8 @@
 <html>
 <head>
 	<title>gravity</title>
+	<link href="https://fonts.googleapis.com/css?family=Slackey" rel="stylesheet">
+
 	<script type="text/javascript" src="xy/vector.js"></script>
 	<script type="text/javascript" src="xy/line-segment.js"></script>
 	<script type="text/javascript" src="xy/polygon.js"></script>
@@ -24,12 +26,24 @@
 	<script type="text/javascript" src="universe.js"></script>
 	<script type="text/javascript" src="main.js"></script>
 
+	<script type="text/javascript" src="fullscreen.js"></script>
+
 	<link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
 	<div>
 		<canvas id="background"></canvas>
 		<canvas id="game-board"></canvas>
+	</div>
+	<div id="data-panel">
+		<button id="fullscreen">Fullscreen</button>
+		<div id="scores">
+			<span id="score-1">0</span> - <span id="score-2">0</span>
+		</div>
+		<div id="shot">
+			Power: <span id="shot-power">0</span>%<br>
+			Angle: <span id="shot-angle">0</span>&deg;
+		</div>
 	</div>
 </body>
 </html>
