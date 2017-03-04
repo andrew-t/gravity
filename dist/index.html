@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>gravity</title>
+	<link href="https://fonts.googleapis.com/css?family=Slackey" rel="stylesheet">
+
+	<script type="text/javascript" src="xy/vector.js"></script>
+	<script type="text/javascript" src="xy/line-segment.js"></script>
+	<script type="text/javascript" src="xy/polygon.js"></script>
+	<script type="text/javascript" src="xy/direction.js"></script>
+	<script type="text/javascript" src="xy/circle.js"></script>
+
+	<script type="text/javascript" src="framerate/events.js"></script>
+	<script type="text/javascript" src="framerate/framerate.js"></script>
+
+	<script type="text/javascript" src="collision-util.js"></script>
+
+	<script type="text/javascript" src="starfield.js"></script>
+	<script type="text/javascript" src="planet.js"></script>
+	<script type="text/javascript" src="star-system.js"></script>
+	<script type="text/javascript" src="explosion.js"></script>
+	<script type="text/javascript" src="player.js"></script>
+	<script type="text/javascript" src="particle.js"></script>
+	<script type="text/javascript" src="collision.js"></script>
+
+	<script type="text/javascript" src="universe.js"></script>
+	<script type="text/javascript" src="main.js"></script>
+
+	<script type="text/javascript" src="fullscreen.js"></script>
+
+	<link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+	<div>
+		<canvas id="background"></canvas>
+		<canvas id="game-board"></canvas>
+	</div>
+	<button id="fullscreen">Fullscreen</button>
+	<div id="data-panel" class="panel">
+		<div id="scores">
+			<span id="score-1">0</span> - <span id="score-2">0</span>
+		</div>
+		<div id="shot">
+			Power: <span id="shot-power">0</span>%<br>
+			Angle: <span id="shot-angle">0</span>&deg;
+		</div>
+		<div id="winner-full">
+			<span id="winner">Nobody</span> wins!
+		</div>
+	</div>
+	<div id="intro" class="panel">
+		<h1>Gravity</h1>
+		<p>
+			This is a two-player, deep-space shooting game.
+		</p>
+		<p>
+			Each player controls a spaceship.
+			They take it in turns shooting at their opponent.
+			When it is your turn, your ship will be circled in green.
+			To fire, hold down the mouse button.
+			The power will start building.
+			When it reaches the amount you want, release the mouse button.
+			A missile will be launched towards your mouse cursor.
+			It will bend around the nearby planets&rsquo; gravitational fields,
+			so hitting your opponent will be tricky.
+		</p>
+		<p>
+			If you can&rsquo;t find a path to your opponent&rsquo;s ship,
+			you might need to blast your way through a planet or two.
+			Don&rsquo;t worry, nobody much lives there.
+		</p>
+		<p>
+			Click anywhere to start.
+		</p>
+	</div>
+</body>
+</html>

@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', e => {
 	const gameBoard = getSizedCanvas('game-board'),
-		universe = new Universe(gameBoard);
+		universe = new Universe(gameBoard),
 		starfield = new Starfield(
 			getSizedCanvas('background'),
 			{ universe });

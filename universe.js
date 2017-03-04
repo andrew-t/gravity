@@ -8,7 +8,7 @@ class Universe {
 		this.playerMargin = 100;
 		this.playerRadius = 20;
 		this.maxShotVelocity = 400;
-		this.shotPowerUpSpeed = 2000 / this.maxShotVelocity;
+		this.shotPowerUpSpeed = this.maxShotVelocity / 2000;
 
 		this.starSystem = new StarSystem(this);
 		this.players = [];
@@ -42,7 +42,7 @@ class Universe {
 		this.timestream.maxInterval = 100;
 		this.timestream.on('frame', interval => this.withTransformedCanvas(ctx => {
 			if (this.gameState.state == Universe.POWERING) {
-				this.gameState.shot.power += this.shotPowerUpSpeed;
+				this.gameState.shot.power += this.shotPowerUpSpeed * interval;
 				if (this.gameState.shot.power >= this.maxShotVelocity)
 					this.gameState.shot.power = this.maxShotVelocity;
 				this.updateShotAngle();
@@ -93,7 +93,7 @@ class Universe {
 									lifetime: 100000,
 									debrisRadius: 3,
 									globalCompositeOperation: 'source-over',
-									baseColour: `${planetCollision.obstacle.hue}, 75%, 20%`,
+									baseColour: `${planetCollision.obstacle.hue}, 75%, 45%`,
 									colourModel: 'hsl',
 									smooth: false
 								});

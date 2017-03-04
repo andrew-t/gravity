@@ -1,4 +1,3 @@
-
 class OneDimensionalSet {
 	constructor() {
 		this.parts = [];
@@ -10,8 +9,8 @@ class OneDimensionalSet {
 			return;
 		if (end < start)
 			return this.add(end, start);
-		const newPart = { start, end },
-			newParts = [];
+		let newPart = { start, end };
+		const newParts = [];
 		this.parts.forEach(part => {
 			if (OneDimensionalSet.overlaps(part, newPart))
 				newPart = OneDimensionalSet.combine(part, newPart);
