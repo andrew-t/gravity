@@ -7,7 +7,7 @@ class Universe {
 		this.craterSize = 25;
 		this.playerMargin = 100;
 		this.playerRadius = 20;
-		this.maxShotVelocity = 400;
+		this.maxShotVelocity = 600;
 		this.ownerClearance = 50;
 		this.shotPowerUpSpeed = this.maxShotVelocity / 3000;
 
