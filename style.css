@@ -9,6 +9,7 @@ canvas {
 	left: 0;
 	width: 100vw;
 	height: 100vh;
+	cursor: crosshair;
 }
 
 .panel {
@@ -46,6 +47,7 @@ h1 {
 	width: 8em;
 	display: none;
 	pointer-events: none;
+	cursor: crosshair;
 }
 .player-1.powering-up #data-panel {
 	right: 1em;
