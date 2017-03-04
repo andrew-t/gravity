@@ -1,23 +1,24 @@
-document.addEventListener('DOMContentLoaded', e => {
-	const gameBoard = getSizedCanvas('game-board');
+document.addEventListener('DOMContentLoaded', e => setTimeout(() => {
+	const gameBoard = getSizedCanvas('game-board'),
+		universe = new Universe(gameBoard);
+		starfield = new Starfield(
+			getSizedCanvas('background'),
+			{ universe });
 
-	const universe = new Universe(gameBoard);
-	universe.addPlayer(
-		new Vector(50, gameBoard.height / 2),
-		20);
-	universe.addPlayer(
-		new Vector(gameBoard.width - 50, gameBoard.height / 2),
-		20);
-
-	new Starfield(getSizedCanvas('background'), {
-		starSystem: universe.starSystem
-	})
+	window.addEventListener('resize', e => {
+		getSizedCanvas('background');
+		getSizedCanvas('game-board');
+		starfield.forceResize();
+		universe.starSystem.forceRedraw();
+	});
 
 	function getSizedCanvas(id) {
 		const canvas = document.getElementById(id);
-		canvas.width = document.body.clientWidth;
-		canvas.height = canvas.width * 0.65;
+		canvas.width = canvas.clientWidth;
+		canvas.height = canvas.clientHeight;
+		console.log('Setting canvas ' + id + ' to ' +
+			canvas.width + ' x ' + canvas.height);
 		return canvas;
 	}
 	
-});
+}));

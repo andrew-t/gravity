@@ -1,7 +1,12 @@
 class Universe {
 	constructor(canvas) {
-		this.canvas = canvas;
-		this.starSystem = new StarSystem(canvas);
+		this._canvas = canvas;
+
+		this.width = 1440;
+		this.height = 768;
+		this.craterSize = 25;
+
+		this.starSystem = new StarSystem(this);
 		this.players = [];
 		this.particles = new Set();
 
@@ -10,12 +15,9 @@ class Universe {
 			state: Universe.TARGETTING
 		};
 
-		this.craterSize = 25;
-
 		this.timestream = new Timestream();
 		this.timestream.maxInterval = 100;
-		this.timestream.on('frame', interval => {
-			const ctx = this.canvas.getContext('2d');
+		this.timestream.on('frame', interval => this.withTransformedCanvas(ctx => {
 			let ongoingShot = false;
 			this.drawBackground(ctx);
 			this.particles.forEach(particle => {
@@ -75,18 +77,28 @@ class Universe {
 			if (!ongoingShot &&
 				this.gameState.state == Universe.ONGOING_SHOT)
 				this.gameState.state = Universe.TARGETTING;
-		});
+		}));
+
+		this.addPlayer(new Vector(50, this.height / 2), 20);
+		this.addPlayer(new Vector(this.width - 50, this.height / 2), 20);
 
 		this._clickListener = e => {
 			if (this.gameState.state != Universe.TARGETTING)
 				return;
-			const mouse = Vector.canvasMouseVector(this.canvas, e);
+			const mouse = this.mouseVector(e);
 			this.currentPlayer.shoot(
 				mouse.minus(this.currentPlayer.location)
 					.times(1));
 			this.endTurn();
 		};
 		canvas.addEventListener('click', this._clickListener);
+	}
+
+	mouseVector(e) {
+		return Vector.canvasMouseVector(this._canvas, e)
+			.minus(new Vector(this._canvas.width / 2, this._canvas.height / 2))
+			.over(this._lastScale || 1)
+			.plus(new Vector(this.width / 2, this.height / 2));
 	}
 
 	addPlayer(location, size) {
@@ -105,9 +117,30 @@ class Universe {
 	}
 
 	drawBackground(ctx) {
-		ctx.clearRect(-10, -10, this.canvas.width + 20, this.canvas.height + 20);
 		this.starSystem.draw(ctx);
 		this.players.forEach(player => player.draw(ctx));
+	}
+
+	withTransformedCanvas(code,
+			canvas = this._canvas,
+			ctx = canvas.getContext('2d'),
+			clear = true) {
+		if (clear)
+			ctx.clearRect(-10, -10, canvas.width + 20, canvas.height + 20);
+		const scale = Math.min(
+			canvas.width / this.width,
+			canvas.height / this.height);
+		ctx.save();
+		ctx.translate(canvas.width / 2, canvas.height / 2);
+		ctx.scale(scale, scale);
+		ctx.translate(-this.width / 2, -this.height / 2);
+		if (canvas == this._canvas) {
+			if (this._lastScale != scale)
+				console.log('Viewing at ' + (scale * 100) + '% scale');
+			this._lastScale = scale;
+		}
+		code(ctx);
+		ctx.restore();
 	}
 
 	gravityAt(location) {
@@ -126,7 +159,7 @@ class Universe {
 
 	destroy() {
 		this._cancelUpdates();
-		this.canvas.removeEventListener(this._clickListener);
+		this._canvas.removeEventListener(this._clickListener);
 	}
 }
 

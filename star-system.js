@@ -1,6 +1,6 @@
 class StarSystem {
-	constructor(canvas, planetCount = 5) {
-		this.canvas = canvas;
+	constructor(universe, planetCount = 5) {
+		this.universe = universe;
 
 		// TODO: Generate?
 		const planetMarginSide = 100,
@@ -10,8 +10,8 @@ class StarSystem {
 			maxPlanetRadius = 150,
 			density = 2000,
 			planetRadiusVariation = maxPlanetRadius - minPlanetRadius,
-			planetAreaWidth = canvas.width - planetMarginSide * 2,
-			planetAreaHeight = canvas.height - planetMarginTop * 2;
+			planetAreaWidth = universe.width - planetMarginSide * 2,
+			planetAreaHeight = universe.height - planetMarginTop * 2;
 		this.densityPower = 2;
 		// mass = density * radius ^ densityPower
 		// should be 3 in reality, or 2 in ideal 2D world
@@ -62,7 +62,7 @@ class StarSystem {
 			ctx.putImageData(this.image, 0, 0);
 		else {
 			this.planets.forEach(planet => planet.draw(ctx));
-			this.image = ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
+			// this.image = ctx.getImageData(0, 0, this.universe.width, this.universe.height);
 		}
 	}
 	drawBacks(ctx) {
