@@ -1,9 +1,13 @@
 class Player {
-	constructor(universe, location, radius) {
+	constructor(universe, location, radius, imageFilename) {
 		this.universe = universe;
 		this.location = location;
 		this.hitArea = new Circle(location, radius);
 		this.destroyed = false;
+
+		const img = new Image();
+		img.addEventListener('load', this.image = img);
+		img.src = imageFilename;
 	}
 
 	shoot(initialVelocity) {
@@ -43,10 +47,18 @@ class Player {
 	draw(ctx) {
 		if (this.destroyed)
 			return;
-		// TODO - draw something nice
-		ctx.fillStyle = 'red';
-		ctx.strokeStyle = 'white';
-		ctx.lineWidth = 5;
-		this.hitArea.draw(ctx);
+		if (this.image) {
+			ctx.drawImage(this.image,
+				0, 0, this.image.width, this.image.height,
+				this.location.x - this.hitArea.radius,
+				this.location.y - this.hitArea.radius,
+				this.hitArea.radius * 2,
+				this.hitArea.radius * 2);
+		} else {
+			ctx.fillStyle = 'red';
+			ctx.strokeStyle = 'white';
+			ctx.lineWidth = 5;
+			this.hitArea.draw(ctx);
+		}
 	}
 }

@@ -14,8 +14,12 @@ class Planet {
 		ctx.strokeStyle = 'transparent';
 		if (!this.gradient) {
 			this.gradient = ctx.createRadialGradient(
-				this.location.x - this.radius * 0.3, this.location.y - this.radius * 0.3, this.radius * 2,
-				this.location.x - this.radius * 0.3, this.location.y - this.radius * 0.3, 0);
+				this.location.x - this.radius * 0.3,
+				this.location.y - this.radius * 0.3,
+				this.radius * 2,
+				this.location.x - this.radius * 0.3,
+				this.location.y - this.radius * 0.3,
+				0);
 			this.gradient.addColorStop(0, `hsl(${this.hue}, 75%, 20%)`);
 			this.gradient.addColorStop(1, `hsl(${this.hue}, 75%, 75%)`);
 		}
@@ -27,7 +31,7 @@ class Planet {
 		ctx.globalCompositeOperation = 'source-atop';
 		ctx.fillStyle = 'transparent';
 		ctx.strokeStyle = '#840';
-		ctx.strokeWidth = 8;
+		ctx.lineWidth = 8;
 		this.craters.forEach(crater => crater.draw(ctx));
 		ctx.globalCompositeOperation = 'source-over';
 	}

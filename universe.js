@@ -83,6 +83,8 @@ class Universe {
 								if (playerCollision) {
 									player.explode();
 									particle.impact(playerCollision);
+									document.getElementById('winner')
+										.innerHTML = player.name;
 									this.gameState.state = Universe.GAME_OVER;
 								}
 							});
@@ -100,10 +102,14 @@ class Universe {
 
 		this.addPlayer(
 			new Vector(this.playerMargin, this.height / 2),
-			this.playerRadius);
+			this.playerRadius,
+			'img/ship1.png')
+				.name = 'Player One';
 		this.addPlayer(
 			new Vector(this.width - this.playerMargin, this.height / 2),
-			this.playerRadius);
+			this.playerRadius,
+			'img/ship2.png')
+				.name = 'Player Two';
 
 		this._clickListener = e => {
 			if (this.gameState.state != Universe.TARGETTING)
@@ -141,9 +147,10 @@ class Universe {
 			.plus(new Vector(this.width / 2, this.height / 2));
 	}
 
-	addPlayer(location, size) {
-		this.players.push(
-			new Player(this, location, size));
+	addPlayer(location, size, filename) {
+		const player = new Player(this, location, size, filename);
+		this.players.push(player);
+		return player;
 	}
 
 	addParticle(...args) {

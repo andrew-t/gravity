@@ -1,3 +1,7 @@
+body {
+	background: black;
+}
+
 canvas {
 	position: absolute;
 	top: 0;
@@ -18,15 +22,31 @@ canvas {
 	padding: 1em;
 	font-size: 2em;
 	box-shadow: 0 0 1em #0f0;
-}
-.player-1 #data-panel {
-	right: 1em;
-}
-.player-2 #data-panel {
-	left: 1em;
-}
-body:not(.targetting) #data-panel {
+	text-shadow: 0 0 .2em #0f0;
 	display: none;
+}
+.player-1.targetting #data-panel {
+	right: 1em;
+	display: block;
+}
+.player-2.targetting #data-panel {
+	left: 1em;
+	display: block;
+}
+body:not(.targetting) #shot {
+	display: none;
+}
+body:not(.game-over) #winner-full {
+	display: none;
+}
+#winner-full {
+	text-align: center;
+}
+
+.game-over #data-panel {
+	left: calc(50vw - 4em);
+	top: calc(50vh - 2em);
+	display: block;
 }
 
 #fullscreen {
