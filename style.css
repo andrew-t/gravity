@@ -27,6 +27,15 @@ canvas {
 body:not(.pregame) #intro {
 	display: none;
 }
+
+* {
+	user-select: none;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+	-webkit-touch-callout: none;
+}
+
 #intro {
 	position: absolute;
 	left: 25vw;

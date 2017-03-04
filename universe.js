@@ -143,15 +143,16 @@ class Universe {
 
 		this._canvasListeners = {};
 
-		this.addCanvasListener('mousedown', e => {
+		this.addCanvasListener('touchstart mousedown', e => {
 			if (this.gameState.state == Universe.TARGETTING) {
 				this.gameState.shot.power = 0;
 				this.updateShotAngle(e);
 				this.gameState.state = Universe.POWERING;
 			}
+			e.preventDefault();
 		});
 
-		this.addCanvasListener('mouseup', e => {
+		this.addCanvasListener('touchend mouseup', e => {
 			if (this.gameState.state != Universe.POWERING)
 				return;
 			this.updateShotAngle(e);
@@ -160,6 +161,7 @@ class Universe {
 			this.currentPlayer.shoot(this.gameState.shot.angle
 					.times(this.gameState.shot.power));
 			this.endTurn();
+			e.preventDefault();
 		});
 
 		this.addCanvasListener('mouseout', e => {
@@ -167,10 +169,11 @@ class Universe {
 				this.gameState.state = Universe.TARGETTING;
 		});
 
-		this.addCanvasListener('mousemove', e => {
+		this.addCanvasListener('touchmove mousemove', e => {
 			if (this.gameState.state == Universe.POWERING ||
 				this.gameState.state == Universe.TARGETTING)
 				this.updateShotAngle(e);
+			e.preventDefault();
 		});
 	}
 
@@ -179,8 +182,8 @@ class Universe {
 	}
 
 	updateShotAngle(e) {
-		if (e) {
-			this.gameState.shot.angle = this.mouseVector(e)
+		if (e && (!e.touches || e.touches.length == 1)) {
+			this.gameState.shot.angle = this.eventVector(e)
 				.minus(this.currentPlayer.location)
 				.normalise();
 			document.getElementById('shot-angle').innerHTML =
@@ -192,11 +195,14 @@ class Universe {
 				* 100 / this.maxShotVelocity);
 	}
 
-	addCanvasListener(event, callback) {
-		if (!this._canvasListeners[event])
-			this._canvasListeners[event] = [];
-		this._canvasListeners[event].push(callback);
-		this._canvas.addEventListener(event, callback);
+	addCanvasListener(events, callback) {
+		events.split(' ')
+			.forEach(event => {
+				if (!this._canvasListeners[event])
+					this._canvasListeners[event] = [];
+				this._canvasListeners[event].push(callback);
+				this._canvas.addEventListener(event, callback);
+			});
 	}
 
 	otherPlayer(player) {
@@ -212,8 +218,9 @@ class Universe {
 		return shot;
 	}
 
-	mouseVector(e) {
-		return Vector.canvasMouseVector(this._canvas, e)
+	eventVector(e) {
+		return Vector.canvasMouseVector(this._canvas,
+				e.touches ? e.touches[0] : e)
 			.minus(new Vector(this._canvas.width / 2, this._canvas.height / 2))
 			.over(this._lastScale || 1)
 			.plus(new Vector(this.width / 2, this.height / 2));
