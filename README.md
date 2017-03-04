@@ -6,6 +6,8 @@ This game uses entirely Newtonian physics. Quantum and relativistic effects are 
 
 The simulation uses Euler's method: every frame, the particles are advanced in a straight line, and then accelerated by the gravitational pull of all planets. The simulation updates whenever the browser redraws, so the faster your computer, the more accurate the simulation.
 
+Also, the mass of a planet depends on its radius squared, not cubed. Similarly, the decrease in gravity within a planet scales with the square of distance from the core. This makes a lot of sense in a 2D universe, but mostly it seemed to improve gameplay.
+
 ## History
 This is the third version. The first was a DOS binary, now long-lost to the world (as far as I know; possibly I have a backup somewhere that includes it).
 

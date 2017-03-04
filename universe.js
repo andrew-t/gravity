@@ -8,7 +8,8 @@ class Universe {
 		this.playerMargin = 100;
 		this.playerRadius = 20;
 		this.maxShotVelocity = 400;
-		this.shotPowerUpSpeed = this.maxShotVelocity / 2000;
+		this.ownerClearance = 50;
+		this.shotPowerUpSpeed = this.maxShotVelocity / 3000;
 
 		this.starSystem = new StarSystem(this);
 		this.players = [];
@@ -78,7 +79,6 @@ class Universe {
 					const planetCollision = this.starSystem.collision(
 							motion, particle.radius);
 					if (planetCollision) {
-						particle.impact(planetCollision);
 						if (particle.destroysPlanet) {
 							planetCollision.obstacle.addCrater(
 								planetCollision.location,
@@ -98,10 +98,16 @@ class Universe {
 									smooth: false
 								});
 						}
+						particle.impact(planetCollision);
 					}
 					if (particle.isBullet) {
 						ongoingShot = true;
-						if (particle.hasClearedShooter)
+						if (particle.location.distanceTo(particle.owner.location) >
+									this.ownerClearance &&
+								!particle.hasClearedShooter) {
+							particle.hasClearedShooter = true;
+							console.log('Missile cleared shooter');
+						} else if (particle.hasClearedShooter)
 							this.players.forEach(player => {
 								const playerCollision =
 									player.collision(motion, particle.radius);
@@ -113,9 +119,6 @@ class Universe {
 									this.gameState.state = Universe.GAME_OVER;
 								}
 							});
-						else if (particle.location.distanceTo(particle.owner.location) >
-								particle.radius + particle.owner.hitArea.radius)
-							particle.hasClearedShooter = true;
 					}
 				}
 				particle.draw(ctx);

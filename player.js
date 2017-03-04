@@ -31,12 +31,15 @@ class Player {
 		}, 5000);
 	}
 
-	collision(lineSegment, radius) {
-		// TODO: do this properly
-		if (this.location.distanceTo(lineSegment.end) <=
-				this.hitArea.radius + radius) {
-			return new Collision(1, lineSegment.end, this);
-		}
+	collision(lineSegment, missileRadius) {
+		const impact = lineSegment.intersectionWithCircle(
+			new Circle(this.location, this.hitArea.radius + missileRadius));
+		if (!impact)
+			return null;
+		const t = lineSegment.parametricTOfPoint(impact.start);
+		return t >= 0 && t <= 1
+			? new Collision(t, impact.start, this)
+			: null;
 	}
 
 	explode() {
