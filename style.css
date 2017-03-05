@@ -84,7 +84,7 @@ body:not(.game-over) #winner-full {
 
 #fullscreen {
 	position: absolute;
-	top: 1em;
+	bottom: 1em;
 	right: 1em;
 }
 

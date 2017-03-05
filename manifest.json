@@ -1,0 +1,37 @@
+{
+  "name": "Gravity",
+  "short_name": "Gravity",
+  "description": "A two-player, physics-based, deep-space blaster game",
+  "background_color": "black",
+  "theme_color": "black",
+  "start_url": "http://www.andrewt.net/gravity/",
+  "scope": "/gravity/",
+  "display": "standalone",
+  "orientation": "landscape",
+  "permissions": [ ],
+  "icons": [{
+    "src": "img/icons/48.png",
+    "sizes": "48x48",
+    "type": "image/png"
+  }, {
+    "src": "img/icons/72.png",
+    "sizes": "72x72",
+    "type": "image/png"
+  }, {
+    "src": "img/icons/96.png",
+    "sizes": "96x96",
+    "type": "image/png"
+  }, {
+    "src": "img/icons/144.png",
+    "sizes": "144x144",
+    "type": "image/png"
+  }, {
+    "src": "img/icons/168.png",
+    "sizes": "168x168",
+    "type": "image/png"
+  }, {
+    "src": "img/icons/192.png",
+    "sizes": "192x192",
+    "type": "image/png"
+  }]
+}
