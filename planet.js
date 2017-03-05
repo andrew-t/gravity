@@ -82,8 +82,9 @@ class Planet {
 		return el == null
 			? null
 			: new Collision(el,
-				lineSegment.atParametricT(el),
-				this);
+				lineSegment,
+				this,
+				missileRadius);
 	}
 
 	gravityAt(point, densityPower = 3) {

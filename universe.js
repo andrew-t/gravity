@@ -10,6 +10,9 @@ class Universe {
 		this.maxShotVelocity = 600;
 		this.ownerClearance = 50;
 		this.shotPowerUpSpeed = this.maxShotVelocity / 3000;
+		this.particleElasticity = 0.2;
+		this.particleFriction = 0.2;
+		this.collisionDelta = 0.5;
 
 		this.starSystem = new StarSystem(this);
 		this.players = [];
@@ -84,18 +87,19 @@ class Universe {
 								planetCollision.location,
 								this.craterSize);
 							// Bits of planet
-							Explosions.single(this, planetCollision.location,
+							Explosions.single(this, planetCollision.location.plus(planetCollision.normal.times(20)),
 								{
 									velocity: Vector.zero,
 									violence: 400,
-									destroyOnImpact: true,
+									destroyOnImpact: false,
 									debrisCount: 250,
-									lifetime: 100000,
+									lifetime: 2000,
 									debrisRadius: 3,
 									globalCompositeOperation: 'source-over',
 									baseColour: `${planetCollision.obstacle.hue}, 75%, 45%`,
 									colourModel: 'hsl',
-									smooth: false
+									smooth: false,
+									bounce: 0.3
 								});
 						}
 						particle.impact(planetCollision);
@@ -265,8 +269,13 @@ class Universe {
 				console.log('Viewing at ' + (scale * 100) + '% scale');
 			this._lastScale = scale;
 		}
-		code(ctx);
-		ctx.restore();
+	//	try {
+			code(ctx);
+	//	} catch(e) {
+			ctx.restore();
+	//		throw e;
+	//	}
+	//	ctx.restore();
 	}
 
 	gravityAt(location) {

@@ -50,7 +50,8 @@ const Explosions = {
 		globalCompositeOperation,
 		baseColour,
 		smooth,
-		colourModel
+		colourModel,
+		bounce
 	}) {
 
 		if (!velocity) velocity = Vector.zero;
@@ -58,6 +59,7 @@ const Explosions = {
 		if (!debrisCount) debrisCount = 1000;
 		if (!debrisRadius) debrisRadius = 20;
 		if (destroyOnImpact === undefined) destroyOnImpact = true;
+		if (bounce === undefined) bounce = false;
 		if (!lifetime) lifetime = 1000;
 		if (!globalCompositeOperation)
 			globalCompositeOperation = 'screen';
@@ -67,6 +69,7 @@ const Explosions = {
 		if (!colourModel) colourModel = 'rgb';
 
 		const startTime = universe.timestream.t;
+		console.log('Explosion at ' + position.toString());
 
 		for (let i = 0; i < debrisCount; ++i) {
 			const r = Math.random() * violence,
@@ -78,7 +81,7 @@ const Explosions = {
 						.plus(velocity),
 					debrisRadius,
 					{
-						checkCollisions: destroyOnImpact,
+						checkCollisions: destroyOnImpact || bounce,
 						globalCompositeOperation,
 						disposable: true,
 						colour: colourModel + '(' + baseColour + ')'
@@ -103,6 +106,11 @@ const Explosions = {
 			if (destroyOnImpact)
 				particle.on('impact', collision =>
 					particle.destroy());
+			else if (bounce) {
+				particle.elasticity = bounce;
+				particle.on('impact', collision =>
+					particle.bounce(collision));
+			}
 			universe.timestream.setTimeout(() =>
 				particle.destroy(),
 				lifetime);

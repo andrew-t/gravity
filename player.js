@@ -2,6 +2,7 @@ class Player {
 	constructor(universe, location, radius, imageFilename) {
 		this.universe = universe;
 		this.location = location;
+		this.radius = radius;
 		this.hitArea = new Circle(location, radius);
 		this.destroyed = false;
 
@@ -32,13 +33,15 @@ class Player {
 	}
 
 	collision(lineSegment, missileRadius) {
+		if (this.destoyed)
+			return null;
 		const impact = lineSegment.intersectionWithCircle(
-			new Circle(this.location, this.hitArea.radius + missileRadius));
+			new Circle(this.location, this.radius + missileRadius));
 		if (!impact)
 			return null;
 		const t = lineSegment.parametricTOfPoint(impact.start);
 		return t >= 0 && t <= 1
-			? new Collision(t, impact.start, this)
+			? new Collision(t, lineSegment, this, missileRadius)
 			: null;
 	}
 
@@ -53,10 +56,10 @@ class Player {
 		if (this.image) {
 			ctx.drawImage(this.image,
 				0, 0, this.image.width, this.image.height,
-				this.location.x - this.hitArea.radius,
-				this.location.y - this.hitArea.radius,
-				this.hitArea.radius * 2,
-				this.hitArea.radius * 2);
+				this.location.x - this.radius,
+				this.location.y - this.radius,
+				this.radius * 2,
+				this.radius * 2);
 		} else {
 			ctx.fillStyle = 'red';
 			ctx.strokeStyle = 'white';

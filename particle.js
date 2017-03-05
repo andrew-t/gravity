@@ -8,6 +8,9 @@ class Particle {
 		this.location = location;
 		this.velocity = velocity;
 		this.radius = radius;
+		this._lastInterval = 10;
+		this.elasticity = universe.particleElasticity;
+		this.friction = universe.particleFriction;
 
 		this.checkCollisions = def('checkCollisions', true);
 		this.colour = def('colour', 'red');
@@ -54,12 +57,26 @@ class Particle {
 	}
 
 	advance(interval) {
+		this._lastInterval = interval;
 		if (this.destroyed)
 			return null;
 		const oldLocation = this.location;
 		this.location = this.location.plus(this.velocity.times(interval));
-		this.velocity = this.velocity.plus(this.universe.gravityAt(oldLocation).times(interval));
+		this.velocity = this.velocity.plus(
+			this.universe.gravityAt(oldLocation).times(interval));
 		return new LineSegment(oldLocation, this.location);
+	}
+
+	bounce(collision) {
+		this.velocity = this.velocity
+				.times(this.friction)
+				.minus(collision.normal
+					.times(this.velocity.dot(collision.normal)
+						* (1 + this.elasticity) / this.friction));
+		this.location = collision.location
+				.plus(collision.normal.times(this.universe.collisionDelta))
+				.plus(this.velocity
+					.times(this._lastInterval * (1 - collision.proportion)));
 	}
 
 	destroy() {
