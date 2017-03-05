@@ -4,6 +4,7 @@ mkdir dist
 
 echo 'Adding Assets'
 cp index.html dist/index.html
+cp manifest.json dist/manifest.json
 cp style.css dist/style.css
 cp -r img dist
 
