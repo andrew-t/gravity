@@ -57,10 +57,16 @@ document.addEventListener('DOMContentLoaded', e => {
 		document.body.classList.remove('player-2');
 		document.body.classList.add(`player-${player + 1}`);
 	});
-	
+
 	document.addEventListener('click', e => {
-		if (universe.gameState.state == Universe.PREGAME)
-			universe.startGame();
+		switch (universe.gameState.state) {
+			case Universe.GAME_OVER:
+				universe.resetForNewGame();
+				// fall-through
+			case Universe.PREGAME:
+				universe.startGame();
+				// well, if we're not breaking...
+		}
 	});
 
 });

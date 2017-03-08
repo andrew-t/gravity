@@ -4,6 +4,7 @@ class Player {
 		this.location = location;
 		this.hitArea = new Circle(location, radius);
 		this.destroyed = false;
+		this.score = 0;
 
 		const img = new Image();
 		img.addEventListener('load', this.image = img);

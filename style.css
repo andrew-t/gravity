@@ -87,8 +87,3 @@ body:not(.game-over) #winner-full {
 	bottom: 1em;
 	right: 1em;
 }
-
-#scores {
-	text-align: center;
-	display: none;
-}

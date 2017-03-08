@@ -8,6 +8,9 @@ class Starfield {
 		this.options = opts;
 
 		this.forceResize();
+
+		if (opts.universe)
+			opts.universe.on('reset', e => this.draw());
 	}
 
 	forceResize() {

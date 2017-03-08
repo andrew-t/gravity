@@ -11,7 +11,6 @@ class Universe {
 		this.ownerClearance = 50;
 		this.shotPowerUpSpeed = this.maxShotVelocity / 3000;
 
-		this.starSystem = new StarSystem(this);
 		this.players = [];
 		this.particles = new Set();
 
@@ -61,8 +60,8 @@ class Universe {
 							.plus(this.gameState.shot.angle.times(30)),
 						this.currentPlayer.location
 							.plus(this.gameState.shot.angle.times(30 +
-								Math.max(10, this.gameState.shot.power
-									/ this.maxShotVelocity * 100))))
+								Math.max(10, this.gameState.shot.power /
+									this.maxShotVelocity * 100))))
 					.draw(ctx);
 			}
 			this.particles.forEach(particle => {
@@ -114,8 +113,12 @@ class Universe {
 								if (playerCollision) {
 									player.explode();
 									particle.impact(playerCollision);
-									document.getElementById('winner')
-										.innerHTML = this.otherPlayer(player).name;
+									const winner = this.otherPlayer(player);
+									document.getElementById('winner').innerHTML = winner.name;
+									++winner.score;
+									this.players.forEach((player, i) =>
+										document.getElementById(`score-${i + 1}`).innerHTML =
+											player.score);
 									this.gameState.state = Universe.GAME_OVER;
 								}
 							});
@@ -148,8 +151,8 @@ class Universe {
 				this.gameState.shot.power = 0;
 				this.updateShotAngle(e);
 				this.gameState.state = Universe.POWERING;
+				e.preventDefault();
 			}
-			e.preventDefault();
 		});
 
 		this.addCanvasListener('touchend mouseup', e => {
@@ -171,10 +174,19 @@ class Universe {
 
 		this.addCanvasListener('touchmove mousemove', e => {
 			if (this.gameState.state == Universe.POWERING ||
-				this.gameState.state == Universe.TARGETTING)
+				this.gameState.state == Universe.TARGETTING) {
 				this.updateShotAngle(e);
-			e.preventDefault();
+				e.preventDefault();
+			}
 		});
+
+		this.resetForNewGame();
+	}
+
+	resetForNewGame() {
+		this.starSystem = new StarSystem(this);
+		this.players.forEach(player => player.destroyed = false);
+		this._triggerEvent('reset');
 	}
 
 	startGame() {
