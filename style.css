@@ -22,6 +22,7 @@ canvas {
 	box-shadow: 0 0 1em #0f0;
 	text-shadow: 0 0 .2em #0f0;
 	border-radius: 0.5em;
+	position: absolute;
 }
 
 body:not(.pregame) #intro {
@@ -51,7 +52,6 @@ h1 {
 }
 
 #data-panel {
-	position: absolute;
 	top: 1em;
 	width: 8em;
 	display: none;
@@ -72,14 +72,12 @@ body:not(.powering-up) #shot {
 body:not(.game-over) #winner-full {
 	display: none;
 }
-#winner-full {
-	text-align: center;
-}
 
-.game-over #data-panel {
+.game-over #winner-full {
 	left: calc(50vw - 4em);
 	top: calc(50vh - 2em);
 	display: block;
+	text-align: center;
 }
 
 #fullscreen {

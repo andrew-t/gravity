@@ -37,9 +37,10 @@ class Player {
 			new Circle(this.location, this.hitArea.radius + missileRadius));
 		if (!impact)
 			return null;
-		const t = lineSegment.parametricTOfPoint(impact.start);
-		return t >= 0 && t <= 1
-			? new Collision(t, impact.start, this)
+		const t1 = lineSegment.parametricTOfPoint(impact.start),
+			t2 = lineSegment.parametricTOfPoint(impact.end);
+		return Math.max(t1, t2) >= 0 && Math.min(t1, t2) <= 1
+			? new Collision(t1, impact.start, this)
 			: null;
 	}
 
